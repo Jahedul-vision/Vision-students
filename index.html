@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vision Academy - Coaching Management</title>
+<style>
+:root{
+  --navy:#0f2d52;--navy2:#163b6b;--blue:#1e63c4;--accent:#2563eb;
+  --bg:#f4f6f9;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#e3e8ef;
+  --green:#15803d;--amber:#b45309;--red:#b91c1c;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,Arial,sans-serif}
+body{background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+a{text-decoration:none;color:inherit}
+.hidden{display:none!important}
+
+/* Auth */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);padding:20px}
+.auth-card{background:#fff;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.25);width:100%;max-width:420px;padding:34px 30px}
+.auth-logo{text-align:center;margin-bottom:20px}
+.auth-logo .lc{width:64px;height:64px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold;margin:0 auto 10px}
+.auth-logo h1{color:var(--navy);font-size:20px}
+.auth-logo p{color:var(--muted);font-size:13px}
+.btn{border:none;cursor:pointer;border-radius:7px;font-size:14px;font-weight:600;padding:10px 18px;transition:.15s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--navy)}
+.btn-block{width:100%}
+.btn-sm{padding:6px 11px;font-size:12.5px;width:auto}
+.btn-ghost{background:#eef2f7;color:var(--navy)}
+.btn-warn{background:var(--amber);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.auth-foot{text-align:center;margin-top:14px;font-size:13px;color:var(--muted)}
+.auth-foot a{color:var(--blue);font-weight:600;cursor:pointer}
+.msg{padding:9px 12px;border-radius:6px;font-size:13px;margin-bottom:12px;display:none}
+.msg.error{background:#fde8e8;color:#991b1b;display:block}
+.msg.ok{background:#dcfce7;color:#166534;display:block}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--navy)}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;font-size:14px;background:#fff}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue)}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--navy);color:#c7d4e6;position:fixed;height:100vh;overflow-y:auto;z-index:200;transition:.25s}
+.brand{padding:20px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand .lc{width:40px;height:40px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff;overflow:hidden;flex-shrink:0}
+.brand .lc img{width:100%;height:100%;object-fit:cover}
+.brand h2{color:#fff;font-size:15px}
+.brand small{font-size:11px;color:#8aa0bf}
+.nav{list-style:none;padding:12px 0}
+.nav a{display:flex;align-items:center;gap:11px;padding:11px 20px;font-size:14px;color:#c7d4e6;border-left:3px solid transparent;cursor:pointer}
+.nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav a.active{background:rgba(37,99,235,.22);color:#fff;border-left-color:var(--blue)}
+.nav .ic{width:18px;text-align:center}
+.main{flex:1;margin-left:240px;min-width:0}
+.topbar{background:#fff;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
+.topbar h1{font-size:18px;color:var(--navy)}
+.menu-tg{display:none;background:none;border:none;font-size:22px;cursor:pointer;color:var(--navy)}
+.uchip{display:flex;align-items:center;gap:9px;cursor:pointer}
+.uchip img,.uchip .av{width:36px;height:36px;border-radius:50%;object-fit:cover;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.uchip span{font-size:14px;font-weight:600;color:var(--navy)}
+.content{padding:22px}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+.stat .ic{width:48px;height:48px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;background:#eaf1fb;color:var(--blue)}
+.stat h3{font-size:24px;color:var(--navy)}
+.stat p{font-size:12.5px;color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:9px;box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+.phead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px}
+.phead h2{font-size:16px;color:var(--navy)}
+.quick{display:flex;flex-wrap:wrap;gap:10px}
+.quick .q{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px;flex:1;cursor:pointer;color:var(--navy);font-weight:600;font-size:12.5px}
+.quick .q:hover{border-color:var(--blue);background:#f8fafc}
+.quick .q .qi{font-size:22px}
+
+/* Tables */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{background:#f1f5f9;color:var(--navy);text-align:left;padding:11px 13px;font-weight:600;border-bottom:2px solid var(--border);white-space:nowrap}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--border)}
+tbody tr:hover{background:#f8fafc}
+.badge{display:inline-block;padding:2px 9px;border-radius:4px;font-size:11.5px;font-weight:600}
+.b-blue{background:#e0eaff;color:var(--blue)}.b-green{background:#dcfce7;color:var(--green)}
+.b-amber{background:#fef3c7;color:var(--amber)}.b-red{background:#fde8e8;color:var(--red)}
+.b-gold{background:#fef9c3;color:#a16207}.b-purple{background:#ede9fe;color:#6d28d9}
+.acts{display:flex;gap:5px;flex-wrap:wrap}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.toolbar input,.toolbar select{padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:14px}
+.toolbar .srch{flex:1;min-width:180px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.fgrid .full{grid-column:1/-1}
+.empty{text-align:center;padding:34px;color:var(--muted)}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,45,82,.5);z-index:500;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:10px;max-width:620px;width:100%;padding:24px;margin:auto}
+.modal h2{color:var(--navy);margin-bottom:16px;font-size:18px}
+
+/* Loader */
+.loader{position:fixed;inset:0;background:rgba(255,255,255,.7);display:none;align-items:center;justify-content:center;z-index:900;font-weight:600;color:var(--navy)}
+.loader.show{display:flex}
+
+/* Print Slips */
+#slipArea{display:none}
+@media print{
+  body *{visibility:hidden}
+  #slipArea,#slipArea *{visibility:visible}
+  #slipArea{display:block!important;position:absolute;left:0;top:0;width:100%}
+  @page{margin:14mm}
+}
+.slip{background:#fff;padding:18px 36px 30px;color:#000;max-width:780px;margin:0 auto;font-size:13px}
+.slip-top-space{height:10px}
+.slip-h{display:flex;align-items:center;gap:18px;border-bottom:3px double var(--navy);padding-bottom:12px}
+.slip-h img,.slip-h .sl{width:74px;height:74px;object-fit:contain;border-radius:8px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:bold}
+.slip-h h1{font-size:25px;color:var(--navy);letter-spacing:.5px}
+.slip-h .caddr{font-size:12px;color:#333;margin-top:3px}
+.slip-h .ccontact{font-size:11.5px;color:#444;margin-top:2px}
+.slip-title{text-align:center;margin:14px 0;font-size:15px;font-weight:700;text-decoration:underline}
+.slip-row{display:grid;grid-template-columns:1fr 1fr;gap:5px 28px;margin-bottom:14px}
+.slip-row div b{display:inline-block;width:128px}
+.slip table{margin:8px 0;font-size:12.5px}
+.slip table th{background:#f1f5f9}
+.slip-foot{display:flex;justify-content:flex-end;align-items:flex-end;margin-top:44px}
+.slip-foot .sign{border-top:1px solid #000;padding-top:4px;width:170px;text-align:center;font-size:12px}
+
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.menu-tg{display:block}
+}
+</style>
+
+<!-- ====== SUPABASE SDK ====== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="loader" id="loader">⏳ Syncing...</div>
+
+<!-- ===== AUTH SCREEN ===== -->
+<div id="authScreen" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo"><div class="lc">VA</div><h1>Vision Academy</h1><p id="authSub">Admin Login</p></div>
+    <div class="msg" id="authMsg"></div>
+
+    <!-- Login -->
+    <form id="loginForm">
+      <div class="fg"><label>Email</label><input type="email" id="lEmail" required></div>
+      <div class="fg"><label>Password</label><input type="password" id="lPass" required></div>
+      <button type="submit" class="btn btn-primary btn-block">Login</button>
+      <p class="auth-foot">No account yet? <a onclick="showAuth('signup')">Create Admin Account</a></p>
+    </form>
+
+    <!-- Signup -->
+    <form id="signupForm" class="hidden">
+      <div class="fg"><label>Admin Full Name</label><input type="text" id="sName" required></div>
+      <div class="fg"><label>Email</label><input type="email" id="sEmail" required></div>
+      <div class="fg"><label>Password</label><input type="password" id="sPass" required minlength="6"></div>
+      <div class="fg"><label>Confirm Password</label><input type="password" id="sCPass" required></div>
+      <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+      <p class="auth-foot">Already have an account? <a onclick="showAuth('login')">Login</a></p>
+    </form>
+  </div>
+</div>
+
+<!-- ===== APP SHELL ===== -->
+<div id="appShell" class="app hidden">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="lc" id="sideLogo">VA</div><div><h2 id="sideName">Vision Academy</h2><small>Coaching Management</small></div></div>
+    <ul class="nav" id="navList"></ul>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:13px">
+        <button class="menu-tg" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="uchip" onclick="go('profile')"><span id="topName">Admin</span><div id="topAv" class="av">A</div></div>
+    </header>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<!-- Modal + Slip -->
+<div class="overlay" id="overlay"><div class="modal" id="modalBody"></div></div>
+<div id="slipArea"></div>
+
+<script>
+/* ===================== SUPABASE CONFIG ===================== */
+const SUPABASE_URL = "https://vvwkfmxbojzbesqipogp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_NQWxGcKBD_kiKxnRxM90cA_jNxL7TXz";
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ===================== APP STATE ===================== */
+const CLASSES = ["5","6","7","8","9","10","11","12"];
+let DATA = { 
+  settings: { name: "Vision Academy", address: "", phone: "", email: "", logo: "" },
+  batches: ["Batch A", "Batch B", "Batch C"], 
+  students: [], 
+  tests: [], 
+  marks: [], 
+  marksheets: [],
+  fees: [],
+  remarks: {}, 
+  idseq: 1000 
+};
+let ADMIN = { uid: "", name: "Admin", email: "", photo: "" };
+
+function showLoader(b) { document.getElementById('loader').classList.toggle('show', b); }
+
+/* ===================== SUPABASE SYNC ===================== */
+async function loadCloud(uid) {
+  showLoader(true);
+  try {
+    const { data: coaching, error: err1 } = await sb
+      .from('coachings')
+      .select('*')
+      .eq('admin_id', uid)
+      .single();
+    
+    if (coaching) {
+      DATA = {
+        settings: coaching.settings || DATA.settings,
+        batches: coaching.batches || ["Batch A", "Batch B", "Batch C"],
+        students: coaching.students || [],
+        tests: coaching.tests || [],
+        marks: coaching.marks || [],
+        marksheets: coaching.marksheets || [],
+        fees: coaching.fees || [],
+        remarks: coaching.remarks || {},
+        idseq: coaching.idseq || 1000
+      };
+      ADMIN.name = coaching.admin_name || ADMIN.name;
+      ADMIN.photo = coaching.admin_photo || "";
+    } else {
+      await saveCloud();
+    }
+  } catch (e) { console.error(e); }
+  showLoader(false);
+}
+
+async function saveCloud() {
+  if (!ADMIN.uid) return;
+  try {
+    const { error } = await sb
+      .from('coachings')
+      .upsert({
+        admin_id: ADMIN.uid,
+        admin_name: ADMIN.name,
+        admin_photo: ADMIN.photo,
+        admin_email: ADMIN.email,
+        settings: DATA.settings,
+        batches: DATA.batches,
+        students: DATA.students,
+        tests: DATA.tests,
+        marks: DATA.marks,
+        marksheets: DATA.marksheets,
+        fees: DATA.fees,
+        remarks: DATA.remarks,
+        idseq: DATA.idseq,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'admin_id' });
+    
+    if (error) console.error('Save error:', error);
+  } catch (e) { console.error(e); }
+}
+
+let saveTimer = null;
+function persist() { 
+  clearTimeout(saveTimer); 
+  saveTimer = setTimeout(saveCloud, 400); 
+}
+
+/* ===================== DATA ACCESSORS ===================== */
+const getSettings = () => DATA.settings;
+const setSettings = s => { DATA.settings = s; persist(); };
+const getBatches = () => DATA.batches;
+const setBatches = b => { DATA.batches = b; persist(); };
+const getStudents = () => DATA.students;
+const setStudents = s => { DATA.students = s; persist(); };
+const getTests = () => DATA.tests;
+const setTests = t => { DATA.tests = t; persist(); };
+const getMarks = () => DATA.marks;
+const setMarks = m => { DATA.marks = m; persist(); };
+const getMarksheets = () => DATA.marksheets;
+const setMarksheets = m => { DATA.marksheets = m; persist(); };
+const getFees = () => DATA.fees;
+const setFees = f => { DATA.fees = f; persist(); };
+const getRemarks = () => DATA.remarks;
+const setRemarks = r => { DATA.remarks = r; persist(); };
+const currentAdmin = () => ADMIN;
+
+/* ===================== HELPERS ===================== */
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function fmtDate(d) { if (!d) return "-"; const x = new Date(d); return isNaN(x) ? d : x.toLocaleDateString('en-GB'); }
+function pct(o, f) { return f > 0 ? (o / f) * 100 : 0; }
+function avgOf(a) { return a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0; }
+function fileToB64(file) { return new Promise((res, rej) => { if (!file) { res(""); return; } const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
+function genId() { DATA.idseq = (DATA.idseq || 1000) + 1; persist(); return "VA" + DATA.idseq; }
+
+function studentRecords(id) {
+  const tests = getTests();
+  return getMarks().filter(m => m.studentId === id).map(m => {
+    const t = tests.find(x => x.id === m.testId);
+    if (!t) return null;
+    return { testId: t.id, name: t.name, date: t.date, subject: t.subject || "", full: t.full, obtained: m.obtained, pct: pct(m.obtained, t.full) };
+  }).filter(Boolean).sort((a, b) => new Date(a.date) - new Date(b.date));
+}
+
+function studentSummary(id, recs) {
+  recs = recs || studentRecords(id);
+  if (!recs.length) return null;
+  const ps = recs.map(r => r.pct);
+  const avg = avgOf(ps);
+  const hi = Math.max(...ps);
+  const best = recs.find(r => r.pct === hi);
+  return { recs, count: recs.length, avg, hi, best };
+}
+
+function trend(id) {
+  const recs = studentRecords(id);
+  if (recs.length < 2) return { label: "Stable", cls: "t-stable" };
+  const h = Math.ceil(recs.length / 2);
+  const diff = avgOf(recs.slice(h).map(r => r.pct)) - avgOf(recs.slice(0, h).map(r => r.pct));
+  if (diff > 3) return { label: "Improving", cls: "t-up" };
+  if (diff < -3) return { label: "Needs Improvement", cls: "t-down" };
+  return { label: "Stable", cls: "t-stable" };
+}
+
+function studentAvg(id) { const s = studentSummary(id); return s ? s.avg : null; }
+function classOverallTopper(cls) { 
+  let top = null; 
+  getStudents().filter(s => s.class === cls).forEach(s => { 
+    const a = studentAvg(s.id); 
+    if (a == null) return; 
+    if (!top || a > top.avg) top = { student: s, avg: a }; 
+  }); 
+  return top; 
+}
+
+function batchOverallTopper(batch) { 
+  let top = null; 
+  getStudents().filter(s => s.batch === batch).forEach(s => { 
+    const a = studentAvg(s.id); 
+    if (a == null) return; 
+    if (!top || a > top.avg) top = { student: s, avg: a }; 
+  }); 
+  return top; 
+}
+
+function fullTopper() { 
+  let top = null; 
+  getStudents().forEach(s => { 
+    const a = studentAvg(s.id); 
+    if (a == null) return; 
+    if (!top || a > top.avg) top = { student: s, avg: a }; 
+  }); 
+  return top; 
+}
+
+function classWeeklyTopper(cls, testId) {
+  const t = getTests().find(x => x.id === testId);
+  if (!t) return null;
+  let top = null;
+  getStudents().filter(s => s.class === cls).forEach(s => {
+    const m = getMarks().find(m => m.studentId === s.id && m.testId === testId);
+    if (!m) return;
+    const p = pct(m.obtained, t.full);
+    if (!top || p > top.pct) top = { student: s, obtained: m.obtained, full: t.full, pct: p };
+  });
+  return top;
+}
+
+/* ===================== AUTH ===================== */
+function showAuth(mode) {
+  document.getElementById('loginForm').classList.toggle('hidden', mode !== 'login');
+  document.getElementById('signupForm').classList.toggle('hidden', mode !== 'signup');
+  document.getElementById('authSub').textContent = mode === 'login' ? 'Admin Login' : 'Create Admin Account';
+  authMsg('');
+}
+
+function authMsg(t, ok) {
+  const m = document.getElementById('authMsg');
+  m.textContent = t || '';
+  m.className = 'msg ' + (t ? (ok ? 'ok' : 'error') : '');
+}
+
+document.getElementById('signupForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = sName.value.trim();
+  const email = sEmail.value.trim().toLowerCase();
+  const p = sPass.value;
+  const cp = sCPass.value;
+  if (p !== cp) return authMsg("Passwords do not match");
+  showLoader(true);
+  try {
+    const { data, error } = await sb.auth.signUp({ email, password: p });
+    if (error) throw error;
+    ADMIN = { uid: data.user.id, name, email, photo: "" };
+    DATA = {
+      settings: { name: "Vision Academy", address: "", phone: "", email: email, logo: "" },
+      batches: ["Batch A", "Batch B", "Batch C"],
+      students: [],
+      tests: [],
+      marks: [],
+      marksheets: [],
+      fees: [],
+      remarks: {},
+      idseq: 1000
+    };
+    await saveCloud();
+    authMsg("Account created!", true);
+  } catch (err) {
+    showLoader(false);
+    authMsg(err.message);
+  }
+});
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = lEmail.value.trim().toLowerCase();
+  const p = lPass.value;
+  showLoader(true);
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: p });
+    if (error) throw error;
+    ADMIN.uid = data.user.id;
+    ADMIN.email = data.user.email;
+    authMsg("Login successful!", true);
+  } catch (err) {
+    showLoader(false);
+    authMsg(err.message);
+  }
+});
+
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session) {
+    ADMIN.uid = session.user.id;
+    ADMIN.email = session.user.email;
+    await loadCloud(session.user.id);
+    launchApp();
+  } else {
+    document.getElementById('appShell').classList.add('hidden');
+    document.getElementById('authScreen').classList.remove('hidden');
+    showLoader(false);
+  }
+});
+
+function logout() {
+  if (confirm("Logout from Vision Academy?")) {
+    sb.auth.signOut().then(() => location.reload());
+  }
+}
+
+/* ===================== APP NAV ===================== */
+let activePage = "dashboard";
+const NAV = [
+  ["dashboard", "🏠", "Dashboard"],
+  ["students", "👨‍🎓", "Students"],
+  ["batches", "🏷️", "Batches"],
+  ["tests", "📝", "Tests"],
+  ["marks", "✍️", "Marks Entry"],
+  ["marksheets", "📊", "Marksheets"],
+  ["fees", "💰", "Fees"],
+  ["topper", "🏆", "Topper Board"],
+  ["reports", "🖨️", "Reports / Slips"],
+  ["settings", "⚙️", "Settings"],
+  ["profile", "👤", "Admin Profile"]
+];
+
+function buildNav() {
+  document.getElementById('navList').innerHTML = NAV.map(([k, i, l]) =>
+    `<li><a class="${k === activePage ? 'active' : ''}" onclick="go('${k}')"><span class="ic">${i}</span>${l}</a></li>`
+  ).join("") + `<li><a onclick="logout()"><span class="ic">🚪</span>Logout</a></li>`;
+}
+
+function refreshChrome() {
+  const st = getSettings();
+  const a = currentAdmin();
+  document.getElementById('sideName').textContent = st.name;
+  document.getElementById('sideLogo').innerHTML = st.logo ? `<img src="${st.logo}">` : "VA";
+  document.getElementById('topName').textContent = a.name || "Admin";
+  const av = document.getElementById('topAv');
+  if (a.photo) {
+    av.outerHTML = `<img id="topAv" src="${a.photo}">`;
+  } else {
+    const el = document.getElementById('topAv');
+    el.outerHTML = `<div id="topAv" class="av">${esc((a.name || "A")[0].toUpperCase())}</div>`;
+  }
+}
+
+function go(page) {
+  activePage = page;
+  buildNav();
+  refreshChrome();
+  document.getElementById('sidebar').classList.remove('open');
+  const r = {
+    dashboard: renderDashboard,
+    students: renderStudents,
+    batches: renderBatches,
+    tests: renderTests,
+    marks: renderMarks,
+    marksheets: renderMarksheets,
+    fees: renderFees,
+    topper: renderTopper,
+    reports: renderReports,
+    settings: renderSettings,
+    profile: renderProfile
+  };
+  (r[page] || renderDashboard)();
+}
+
+function launchApp() {
+  showLoader(false);
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  go('dashboard');
+}
+
+function setTitle(t) { document.getElementById('pageTitle').textContent = t; }
+const C = () => document.getElementById('content');
+
+function openModal(html) {
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+document.getElementById('overlay').addEventListener('click', e => {
+  if (e.target.id === 'overlay') closeModal();
+});
+
+/* ===================== DASHBOARD ===================== */
+function renderDashboard() {
+  setTitle("Dashboard");
+  const students = getStudents();
+  const tests = getTests();
+  const batches = getBatches();
+  const classesUsed = [...new Set(students.map(s => s.class))];
+  const top = fullTopper();
+  const recentStudents = students.slice(-5).reverse();
+
+  let clsRows = CLASSES.map(c => {
+    const cnt = students.filter(s => s.class === c).length;
+    if (!cnt) return "";
+    const t = classOverallTopper(c);
+    return `<tr><td><span class="badge b-blue">Class ${c}</span></td><td>${cnt}</td>
+      <td>${t ? esc(t.student.name) : '<span style="color:#94a3b8">No marks</span>'}</td>
+      <td>${t ? t.avg.toFixed(2) + '%' : '-'}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="empty">No students yet</td></tr>`;
+
+  let batchRows = batches.map(b => {
+    const cnt = students.filter(s => s.batch === b).length;
+    const t = batchOverallTopper(b);
+    return `<tr><td><span class="badge b-purple">${esc(b)}</span></td><td>${cnt}</td>
+      <td>${t ? esc(t.student.name) : '<span style="color:#94a3b8">No marks</span>'}</td>
+      <td>${t ? t.avg.toFixed(2) + '%' : '-'}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="empty">No batches</td></tr>`;
+
+  let recRows = recentStudents.length ? recentStudents.map(s =>
+    `<tr><td><span class="badge b-blue">${esc(s.id)}</span></td><td>${esc(s.name)}</td><td>Class ${esc(s.class)}</td><td><span class="badge b-purple">${esc(s.batch || '-')}</span></td><td>${fmtDate(s.admission)}</td></tr>`
+  ).join("") : `<tr><td colspan="5" class="empty">No students yet</td></tr>`;
+
+  C().innerHTML = `
+  <div class="cards">
+    <div class="stat"><div class="ic">👨‍🎓</div><div><h3>${students.length}</h3><p>Total Students</p></div></div>
+    <div class="stat"><div class="ic">🏫</div><div><h3>${classesUsed.length}</h3><p>Active Classes</p></div></div>
+    <div class="stat"><div class="ic">🏷️</div><div><h3>${batches.length}</h3><p>Total Batches</p></div></div>
+    <div class="stat"><div class="ic">📝</div><div><h3>${tests.length}</h3><p>Total Tests</p></div></div>
+  </div>
+  <div class="panel">
+    <div class="phead"><h2>🏆 Overall Coaching Topper</h2></div>
+    ${top ? `<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="width:60px;height:60px;border-radius:10px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold">${esc(top.student.name[0].toUpperCase())}</div>
+      <div><h2 style="color:var(--navy);font-size:18px">${esc(top.student.name)}</h2>
+      <p style="color:var(--muted)">Class ${esc(top.student.class)} • ${esc(top.student.batch || '-')} • ID ${esc(top.student.id)}</p>
+      <span class="badge b-gold">Average ${top.avg.toFixed(2)}%</span></div></div>`
+      : `<div class="empty">No marks recorded yet</div>`}
+  </div>
+  <div class="panel"><div class="phead"><h2>⚡ Quick Actions</h2></div>
+    <div class="quick">
+      <div class="q" onclick="addStudent()"><span class="qi">➕</span>Add Student</div>
+      <div class="q" onclick="go('students')"><span class="qi">📋</span>View Students</div>
+      <div class="q" onclick="go('batches')"><span class="qi">🏷️</span>Batches</div>
+      <div class="q" onclick="go('tests')"><span class="qi">📝</span>Add Test</div>
+      <div class="q" onclick="go('marks')"><span class="qi">✍️</span>Marks Entry</div>
+      <div class="q" onclick="go('marksheets')"><span class="qi">📊</span>Marksheets</div>
+      <div class="q" onclick="go('fees')"><span class="qi">💰</span>Fees</div>
+      <div class="q" onclick="go('reports')"><span class="qi">🖨️</span>Slips</div>
+    </div>
+  </div>
+  <div class="panel"><div class="phead"><h2>🏷️ Batch-wise Overview</h2></div>
+    <div class="tw"><table><thead><tr><th>Batch</th><th>Students</th><th>Topper</th><th>Avg %</th></tr></thead><tbody>${batchRows}</tbody></table></div>
+  </div>
+  <div class="panel"><div class="phead"><h2>📊 Class-wise Overview</h2></div>
+    <div class="tw"><table><thead><tr><th>Class</th><th>Students</th><th>Topper</th><th>Avg %</th></tr></thead><tbody>${clsRows}</tbody></table></div>
+  </div>
+  <div class="panel"><div class="phead"><h2>🕘 Recent Students</h2></div>
+    <div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Batch</th><th>Admission</th></tr></thead><tbody>${recRows}</tbody></table></div>
+  </div>`;
+}
+
+/* ===================== BATCHES ===================== */
+function renderBatches() {
+  setTitle("Batches");
+  const batches = getBatches();
+  const students = getStudents();
+  let rows = batches.length ? batches.map((b, i) => {
+    const cnt = students.filter(s => s.batch === b).length;
+    const t = batchOverallTopper(b);
+    return `<tr><td><span class="badge b-purple">${esc(b)}</span></td><td>${cnt}</td>
+      <td>${t ? esc(t.student.name) + ' (' + t.avg.toFixed(2) + '%)' : '<span style="color:#94a3b8">No marks</span>'}</td>
+      <td class="acts"><button class="btn btn-sm btn-warn" onclick="editBatch(${i})">Rename</button>
+        <button class="btn btn-sm btn-danger" onclick="delBatch(${i})">Delete</button></td></tr>`;
+  }).join("") : `<tr><td colspan="4" class="empty">No batches yet</td></tr>`;
+  C().innerHTML = `<div class="panel">
+    <div class="phead"><h2>🏷️ Batch Management</h2><button class="btn btn-primary btn-sm" onclick="addBatch()">➕ Add Batch</button></div>
+    <div class="tw"><table><thead><tr><th>Batch Name</th><th>Students</th><th>Topper</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>
+  </div>`;
+}
+
+function addBatch() {
+  const name = prompt("Enter new batch name:");
+  if (!name) return;
+  const b = getBatches().slice();
+  if (b.includes(name.trim())) return alert("Batch already exists.");
+  b.push(name.trim());
+  setBatches(b);
+  renderBatches();
+}
+
+function editBatch(i) {
+  const b = getBatches().slice();
+  const old = b[i];
+  const name = prompt("Rename batch:", old);
+  if (!name || name.trim() === old) return;
+  if (b.includes(name.trim())) return alert("Exists.");
+  b[i] = name.trim();
+  setBatches(b);
+  setStudents(getStudents().map(s => s.batch === old ? { ...s, batch: name.trim() } : s));
+  renderBatches();
+}
+
+function delBatch(i) {
+  const b = getBatches().slice();
+  const name = b[i];
+  const cnt = getStudents().filter(s => s.batch === name).length;
+  if (!confirm(`Delete "${name}"?${cnt ? ` ${cnt} student(s) batch cleared.` : ''}`)) return;
+  b.splice(i, 1);
+  setBatches(b);
+  setStudents(getStudents().map(s => s.batch === name ? { ...s, batch: "" } : s));
+  renderBatches();
+}
+
+/* ===================== STUDENTS ===================== */
+function renderStudents() {
+  setTitle("Students");
+  const opts = CLASSES.map(c => `<option value="${c}">Class ${c}</option>`).join("");
+  const bopts = getBatches().map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join("");
+  C().innerHTML = `<div class="panel">
+    <div class="phead"><h2>👨‍🎓 Student Management</h2><button class="btn btn-primary btn-sm" onclick="addStudent()">➕ Add Student</button></div>
+    <div class="toolbar">
+      <input class="srch" id="sSearch" placeholder="🔍 Search by name, ID or contact..." oninput="drawStudents()">
+      <select id="sFilter" onchange="drawStudents()"><option value="">All Classes</option>${opts}</select>
+      <select id="sBatchFilter" onchange="drawStudents()"><option value="">All Batches</option>${bopts}</select>
+    </div>
+    <div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Batch</th><th>Admission</th><th>Contact</th><th>Actions</th></tr></thead><tbody id="sBody"></tbody></table></div>
+  </div>`;
+  drawStudents();
+}
+
+function drawStudents() {
+  const q = (document.getElementById('sSearch').value || "").toLowerCase();
+  const fc = document.getElementById('sFilter').value;
+  const fb = document.getElementById('sBatchFilter').value;
+  let list = getStudents();
+  if (fc) list = list.filter(s => s.class === fc);
+  if (fb) list = list.filter(s => s.batch === fb);
+  if (q) list = list.filter(s => (s.name + s.id + (s.contact || "")).toLowerCase().includes(q));
+  const tb = document.getElementById('sBody');
+  if (!list.length) { tb.innerHTML = `<tr><td colspan="7" class="empty">No students found</td></tr>`; return; }
+  tb.innerHTML = list.map(s => `<tr>
+    <td><span class="badge b-blue">${esc(s.id)}</span></td>
+    <td><a onclick="viewProfile('${s.id}')" style="color:var(--blue);font-weight:600;cursor:pointer">${esc(s.name)}</a></td>
+    <td>Class ${esc(s.class)}</td>
+    <td><span class="badge b-purple">${esc(s.batch || '-')}</span></td>
+    <td>${fmtDate(s.admission)}</td>
+    <td>${esc(s.contact || '-')}</td>
+    <td class="acts">
+      <button class="btn btn-sm btn-ghost" onclick="viewProfile('${s.id}')">View</button>
+      <button class="btn btn-sm btn-warn" onclick="addStudent('${s.id}')">Edit</button>
+      <button class="btn btn-sm btn-danger" onclick="delStudent('${s.id}')">Delete</button>
+    </td></tr>`).join("");
+}
+
+function addStudent(id) {
+  const s = id ? getStudents().find(x => x.id === id) : {};
+  const co = CLASSES.map(c => `<option value="${c}" ${s.class === c ? 'selected' : ''}>Class ${c}</option>`).join("");
+  const bo = getBatches().map(b => `<option value="${esc(b)}" ${s.batch === b ? 'selected' : ''}>${esc(b)}</option>`).join("");
+  openModal(`<h2>${id ? 'Edit' : 'Add'} Student</h2>
+  <form id="stForm"><div class="fgrid">
+      <div class="fg full"><label>Student Name *</label><input id="f_name" value="${esc(s.name || '')}" required></div>
+      <div class="fg"><label>Class *</label><select id="f_class" required><option value="">Select</option>${co}</select></div>
+      <div class="fg"><label>Batch *</label><select id="f_batch" required><option value="">Select</option>${bo}</select></div>
+      <div class="fg"><label>Date of Admission</label><input type="date" id="f_adm" value="${s.admission || ''}"></div>
+      <div class="fg"><label>Contact Number</label><input id="f_contact" value="${esc(s.contact || '')}"></div>
+      <div class="fg"><label>Parent/Guardian Name</label><input id="f_parent" value="${esc(s.parent || '')}"></div>
+      <div class="fg"><label>Parent Contact</label><input id="f_pcontact" value="${esc(s.pcontact || '')}"></div>
+      <div class="fg full"><label>Address</label><textarea id="f_addr">${esc(s.address || '')}</textarea></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button type="submit" class="btn btn-primary" style="width:auto">Save</button>
+      <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div></form>`);
+  document.getElementById('stForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    let students = getStudents().slice();
+    const data = {
+      name: f_name.value.trim(),
+      class: f_class.value,
+      batch: f_batch.value,
+      admission: f_adm.value,
+      contact: f_contact.value.trim(),
+      parent: f_parent.value.trim(),
+      pcontact: f_pcontact.value.trim(),
+      address: f_addr.value.trim()
+    };
+    if (id) {
+      students = students.map(x => x.id === id ? { ...x, ...data } : x);
+    } else {
+      data.id = genId();
+      students.push(data);
+    }
+    setStudents(students);
+    closeModal();
+    renderStudents();
+  });
+}
+
+function delStudent(id) {
+  if (!confirm("Delete this student and all their marks?")) return;
+  setStudents(getStudents().filter(s => s.id !== id));
+  setMarks(getMarks().filter(m => m.studentId !== id));
+  setFees(getFees().filter(f => f.studentId !== id));
+  const r = { ...getRemarks() };
+  delete r[id];
+  setRemarks(r);
+  drawStudents();
+}
+
+/* ===================== STUDENT PROFILE ===================== */
+function viewProfile(id) {
+  const s = getStudents().find(x => x.id === id);
+  if (!s) return;
+  setTitle("Student Profile");
+  activePage = "students";
+  buildNav();
+  const sum = studentSummary(id);
+  const remark = getRemarks()[id] || "";
+
+  let rows = sum ? sum.recs.map(r => `<tr><td>${esc(r.name)}</td><td>${fmtDate(r.date)}</td><td>${r.full}</td><td>${r.obtained}</td>
+    <td><span class="badge ${r.pct >= 75 ? 'b-green' : r.pct >= 40 ? 'b-amber' : 'b-red'}">${r.pct.toFixed(2)}%</span></td></tr>`).join("")
+    : `<tr><td colspan="5" class="empty">No test records yet</td></tr>`;
+
+  let summary = sum ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">
+    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center"><h4 style="font-size:18px;color:var(--navy)">${sum.count}</h4><p style="font-size:11.5px;color:var(--muted)">Tests Appeared</p></div>
+    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center"><h4 style="font-size:18px;color:var(--navy)">${sum.avg.toFixed(1)}%</h4><p style="font-size:11.5px;color:var(--muted)">Average</p></div>
+    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center"><h4 style="font-size:18px;color:var(--navy)">${sum.hi.toFixed(1)}%</h4><p style="font-size:11.5px;color:var(--muted)">Highest</p></div></div>` : `<div class="empty">No data</div>`;
+
+  C().innerHTML = `
+  <div class="panel">
+    <div class="phead">
+      <button class="btn btn-sm btn-ghost" onclick="go('students')">← Back</button>
+      <button class="btn btn-sm btn-primary" onclick="openSlipDialog('${id}')">🖨️ Generate Performance Slip</button>
+    </div>
+    <div style="padding-top:12px">
+      <h2>${esc(s.name)}</h2>
+      <p style="margin:6px 0"><span class="badge b-blue">${esc(s.id)}</span> <span class="badge b-gold">Class ${esc(s.class)}</span> <span class="badge b-purple">${esc(s.batch || '-')}</span></p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:11px;margin-top:12px">
+        <div><b style="color:var(--muted);font-size:11.5px">Admission</b><div>${fmtDate(s.admission)}</div></div>
+        <div><b style="color:var(--muted);font-size:11.5px">Contact</b><div>${esc(s.contact || '-')}</div></div>
+        <div><b style="color:var(--muted);font-size:11.5px">Parent/Guardian</b><div>${esc(s.parent || '-')}</div></div>
+        <div><b style="color:var(--muted);font-size:11.5px">Parent Contact</b><div>${esc(s.pcontact || '-')}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel"><div class="phead"><h2>📝 Test Performance</h2></div>
+    <div class="tw"><table><thead><tr><th>Test</th><th>Date</th><th>Full</th><th>Obtained</th><th>%</th></tr></thead><tbody>${rows}</tbody></table></div>
+  </div>
+  <div class="panel"><div class="phead"><h2>📊 Summary</h2></div>${summary}</div>
+  <div class="panel"><div class="phead"><h2>🔎 Analysis</h2></div>
+    <div class="fg"><label>Admin Remarks</label><textarea id="remarkBox" rows="3">${esc(remark)}</textarea></div>
+    <button class="btn btn-green btn-sm" onclick="saveRemark('${id}')">Save Remarks</button>
+  </div>`;
+}
+
+function saveRemark(id) {
+  const r = { ...getRemarks() };
+  r[id] = document.getElementById('remarkBox').value.trim();
+  setRemarks(r);
+  alert("Remarks saved.");
+}
+
+/* ===================== TESTS ===================== */
+function renderTests() {
+  setTitle("Tests");
+  const opts = CLASSES.map(c => `<option value="${c}">Class ${c}</option>`).join("");
+  const bopts = getBatches().map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join("");
+  C().innerHTML = `<div class="panel">
+    <div class="phead"><h2>📝 Add Weekly Test</h2></div>
+    <form id="testForm"><div class="fgrid">
+      <div class="fg"><label>Test Name *</label><input id="t_name" placeholder="Test-1" required></div>
+      <div class="fg"><label>Class *</label><select id="t_class" required><option value="">Select</option>${opts}</select></div>
+      <div class="fg"><label>Batch (optional)</label><select id="t_batch"><option value="">All Batches</option>${bopts}</select></div>
+      <div class="fg"><label>Test Date *</label><input type="date" id="t_date" required></div>
+      <div class="fg"><label>Full Marks *</label><input type="number" id="t_full" min="1" required></div>
+      <div class="fg"><label>Subject (optional)</label><input id="t_sub"></div>
+    </div><button type="submit" class="btn btn-primary btn-sm" style="margin-top:12px">Save Test</button></form>
+  </div>
+  <div class="panel"><div class="phead"><h2>📋 All Tests</h2></div>
+    <div class="tw"><table><thead><tr><th>Test</th><th>Class</th><th>Batch</th><th>Date</th><th>Full</th><th>Subject</th><th>Action</th></tr></thead><tbody id="tBody"></tbody></table></div>
+  </div>`;
+  document.getElementById('testForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const tests = getTests().slice();
+    tests.push({
+      id: "T" + Date.now(),
+      name: t_name.value.trim(),
+      class: t_class.value,
+      batch: t_batch.value,
+      date: t_date.value,
+      full: parseFloat(t_full.value),
+      subject: t_sub.value.trim()
+    });
+    setTests(tests);
+    renderTests();
+  });
+  drawTests();
+}
+
+function drawTests() {
+  const tests = getTests().slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+  const tb = document.getElementById('tBody');
+  if (!tests.length) { tb.innerHTML = `<tr><td colspan="7" class="empty">No tests added</td></tr>`; return; }
+  tb.innerHTML = tests.map(t => `<tr><td><b>${esc(t.name)}</b></td><td>Class ${esc(t.class)}</td><td>${t.batch ? '<span class="badge b-purple">' + esc(t.batch) + '</span>' : '<span style="color:#94a3b8">All</span>'}</td><td>${fmtDate(t.date)}</td><td>${t.full}</td><td>${esc(t.subject || '-')}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="delTest('${t.id}')">Delete</button></td></tr>`).join("");
+}
+
+function delTest(id) {
+  if (!confirm("Delete this test and its marks?")) return;
+  setTests(getTests().filter(t => t.id !== id));
+  setMarks(getMarks().filter(m => m.testId !== id));
+  drawTests();
+}
+
+/* ===================== MARKS ENTRY ===================== */
+function renderMarks() {
+  setTitle("Marks Entry");
+  const opts = CLASSES.map(c => `<option value="${c}">Class ${c}</option>`).join("");
+  const bopts = getBatches().map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join("");
+  C().innerHTML = `<div class="panel"><div class="phead"><h2>✍️ Marks Entry</h2></div>
+    <div class="toolbar">
+      <select id="mClass" onchange="loadTestsForClass()"><option value="">Select Class</option>${opts}</select>
+      <select id="mBatch" onchange="loadMarksTable()"><option value="">All Batches</option>${bopts}</select>
+      <select id="mTest" onchange="loadMarksTable()"><option value="">Select Test</option></select>
+    </div>
+    <div id="marksArea"><div class="empty">Select a class and test to enter marks.</div></div>
+  </div>`;
+}
+
+function loadTestsForClass() {
+  const cls = document.getElementById('mClass').value;
+  const sel = document.getElementById('mTest');
+  const tests = getTests().filter(t => t.class === cls);
+  sel.innerHTML = `<option value="">Select Test</option>` + tests.map(t => `<option value="${t.id}">${esc(t.name)} (${fmtDate(t.date)})${t.batch ? ' [' + esc(t.batch) + ']' : ''} - Full ${t.full}</option>`).join("");
+  document.getElementById('marksArea').innerHTML = `<div class="empty">Select a test to enter marks.</div>`;
+}
+
+function loadMarksTable() {
+  const cls = document.getElementById('mClass').value;
+  const testId = document.getElementById('mTest').value;
+  const batch = document.getElementById('mBatch').value;
+  const area = document.getElementById('marksArea');
+  if (!cls || !testId) { area.innerHTML = `<div class="empty">Select a class and test.</div>`; return; }
+  const test = getTests().find(t => t.id === testId);
+  let studs = getStudents().filter(s => s.class === cls);
+  if (batch) studs = studs.filter(s => s.batch === batch);
+  if (!studs.length) { area.innerHTML = `<div class="empty">No students in this class/batch.</div>`; return; }
+  const marks = getMarks();
+  let rows = studs.map(s => {
+    const m = marks.find(x => x.studentId === s.id && x.testId === testId);
+    const val = m ? m.obtained : "";
+    return `<tr><td><span class="badge b-blue">${esc(s.id)}</span></td><td>${esc(s.name)}</td><td><span class="badge b-purple">${esc(s.batch || '-')}</span></td><td>${test.full}</td>
+      <td><input type="number" min="0" max="${test.full}" style="width:90px;padding:6px 8px;border:1px solid var(--border);border-radius:6px" id="mk_${s.id}" value="${val}" oninput="livePct('${s.id}',${test.full})"></td>
+      <td id="pc_${s.id}">${m ? pct(m.obtained, test.full).toFixed(2) + '%' : '-'}</td></tr>`;
+  }).join("");
+  area.innerHTML = `<div class="tw"><table><thead><tr><th>ID</th><th>Student</th><th>Batch</th><th>Full</th><th>Obtained</th><th>%</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="saveMarks('${testId}','${cls}',${test.full},'${esc(batch)}')">💾 Save All Marks</button>`;
+}
+
+function livePct(sid, full) {
+  const v = parseFloat(document.getElementById('mk_' + sid).value);
+  document.getElementById('pc_' + sid).textContent = (isNaN(v) ? '-' : pct(v, full).toFixed(2) + '%');
+}
+
+function saveMarks(testId, cls, full, batch) {
+  let marks = getMarks().slice();
+  let studs = getStudents().filter(s => s.class === cls);
+  if (batch) studs = studs.filter(s => s.batch === batch);
+  studs.forEach(s => {
+    const el = document.getElementById('mk_' + s.id);
+    if (!el) return;
+    const v = el.value.trim();
+    marks = marks.filter(m => !(m.studentId === s.id && m.testId === testId));
+    if (v !== "") {
+      let o = parseFloat(v);
+      if (o > full) o = full;
+      if (o < 0) o = 0;
+      marks.push({ studentId: s.id, testId, obtained: o });
+    }
+  });
+  setMarks(marks);
+  alert("Marks saved successfully.");
+  loadMarksTable();
+}
+
+/* ===================== MARKSHEETS (UPGRADED) ===================== */
+function renderMarksheets() {
+  setTitle("Marksheets");
+  C().innerHTML = `<div class="panel">
+    <div class="phead"><h2>📊 Generate Marksheet</h2></div>
+    <div style="margin-bottom:16px;padding:12px;background:#f0f9ff;border-left:4px solid var(--blue);border-radius:4px">
+      <p style="font-size:13px">Choose the type of marksheet you want to generate:</p>
+    </div>
+
+    <h3 style="color:var(--navy);font-size:15px;margin-bottom:10px">📈 General Marksheet (Test-based)</h3>
+    <div class="quick" style="margin-bottom:22px">
+      <div class="q" onclick="msGeneralSingle()"><span class="qi">👤</span>Single Student</div>
+      <div class="q" onclick="msGeneralClass()"><span class="qi">🏫</span>Single Class</div>
+      <div class="q" onclick="msGeneralBatch()"><span class="qi">🏷️</span>Batch</div>
+    </div>
+
+    <h3 style="color:var(--navy);font-size:15px;margin-bottom:10px">📚 Subject-wise Marksheet (Manual subjects)</h3>
+    <div class="quick">
+      <div class="q" onclick="msSubjectSingle()"><span class="qi">👤</span>Single Student</div>
+      <div class="q" onclick="msSubjectClass()"><span class="qi">🏫</span>Single Class</div>
+      <div class="q" onclick="msSubjectBatch()"><span class="qi">🏷️</span>Batch</div>
+    </div>
+  </div>`;
+}
+
+/* --- helpers for selectors --- */
+function classOptions(id) {
+  return `<select id="${id}"><option value="">Select Class</option>${CLASSES.map(c => `<option value="${c}">Class ${c}</option>`).join("")}</select>`;
+}
+function batchOptions(id) {
+  return `<select id="${id}"><option value="">Select Batch</option>${getBatches().map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join("")}</select>`;
+}
+
+/* ===== GENERAL (TEST-BASED) MARKSHEETS ===== */
+function msGeneralSingle() {
+  const sopts = getStudents().map(s => `<option value="${s.id}">${esc(s.name)} (Class ${esc(s.class)} • ${esc(s.batch || '-')})</option>`).join("");
+  openModal(`<h2>👤 Single Student Marksheet</h2>
+    <div class="fg"><label>Select Student</label><select id="ms_stud"><option value="">Select</option>${sopts}</select></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="width:auto" onclick="genGeneralSingle()">🖨️ Generate</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+function genGeneralSingle() {
+  const sid = document.getElementById('ms_stud').value;
+  if (!sid) return alert("Select a student");
+  const s = getStudents().find(x => x.id === sid);
+  const recs = studentRecords(sid);
+  closeModal();
+  printGeneralMarksheet("Student Marksheet", [s], { studentMode: true });
+}
+
+function msGeneralClass() {
+  openModal(`<h2>🏫 Single Class Marksheet</h2>
+    <div class="fg"><label>Select Class</label>${classOptions('ms_cls')}</div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="width:auto" onclick="genGeneralClass()">🖨️ Generate</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+function genGeneralClass() {
+  const cls = document.getElementById('ms_cls').value;
+  if (!cls) return alert("Select a class");
+  const studs = getStudents().filter(s => s.class === cls);
+  if (!studs.length) return alert("No students in this class");
+  closeModal();
+  printGeneralMarksheet(`Class ${cls} Marksheet`, studs, { cls });
+}
+
+function msGeneralBatch() {
+  openModal(`<h2>🏷️ Batch Marksheet</h2>
+    <div class="fg"><label>Select Batch</label>${batchOptions('ms_bat')}</div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="width:auto" onclick="genGeneralBatch()">🖨️ Generate</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+function genGeneralBatch() {
+  const batch = document.getElementById('ms_bat').value;
+  if (!batch) return alert("Select a batch");
+  const studs = getStudents().filter(s => s.batch === batch);
+  if (!studs.length) return alert("No students in this batch");
+  closeModal();
+  printGeneralMarksheet(`${batch} Marksheet`, studs, { batch });
+}
+
+function printGeneralMarksheet(title, students, opt) {
+  const st = getSettings();
+  const logo = st.logo ? `<img src="${st.logo}">` : `<div class="sl">VA</div>`;
+  const contactLine = [st.phone ? '📞 ' + esc(st.phone) : '', st.email ? '✉️ ' + esc(st.email) : ''].filter(Boolean).join('  •  ');
+  const header = `<div class="slip-h">${logo}<div>
+    <h1>${esc(st.name)}</h1>
+    <div class="caddr">${esc(st.address)}</div>
+    ${contactLine ? `<div class="ccontact">${contactLine}</div>` : ''}
+  </div></div>`;
+
+  let body = "";
+
+  if (opt.studentMode) {
+    // detailed single student: list all their tests
+    const s = students[0];
+    const recs = studentRecords(s.id);
+    let rows = recs.length ? recs.map(r => `<tr><td>${esc(r.name)}</td><td>${fmtDate(r.date)}</td><td>${r.full}</td><td>${r.obtained}</td><td>${r.pct.toFixed(2)}%</td></tr>`).join("")
+      : `<tr><td colspan="5" style="text-align:center">No test records</td></tr>`;
+    const avg = recs.length ? avgOf(recs.map(r => r.pct)).toFixed(2) + '%' : '-';
+    body = `<div class="slip-row">
+      <div><b>Student Name:</b> ${esc(s.name)}</div><div><b>Student ID:</b> ${esc(s.id)}</div>
+      <div><b>Class:</b> ${esc(s.class)}</div><div><b>Batch:</b> ${esc(s.batch || '-')}</div>
+    </div>
+    <table><thead><tr><th>Test Name</th><th>Date</th><th>Full</th><th>Obtained</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>
+    <p style="margin-top:10px"><b>Overall Average:</b> ${avg}</p>`;
+  } else {
+    // class / batch: collect all tests relevant to these students
+    const studentIds = students.map(s => s.id);
+    const relTestIds = [...new Set(getMarks().filter(m => studentIds.includes(m.studentId)).map(m => m.testId))];
+    const tests = getTests().filter(t => relTestIds.includes(t.id)).sort((a, b) => new Date(a.date) - new Date(b.date));
+    let head = `<tr><th>ID</th><th>Name</th>${tests.map(t => `<th>${esc(t.name)}<br>(${t.full})</th>`).join("")}<th>Avg %</th></tr>`;
+    let rows = students.map(s => {
+      let cells = "";
+      let pcts = [];
+      tests.forEach(t => {
+        const m = getMarks().find(x => x.studentId === s.id && x.testId === t.id);
+        if (m) { cells += `<td>${m.obtained}/${t.full}</td>`; pcts.push(pct(m.obtained, t.full)); }
+        else cells += `<td>-</td>`;
+      });
+      const avg = pcts.length ? avgOf(pcts).toFixed(2) + '%' : '-';
+      return `<tr><td><b>${esc(s.id)}</b></td><td>${esc(s.name)}</td>${cells}<td>${avg}</td></tr>`;
+    }).join("");
+    body = `<div class="slip-row">
+      <div><b>${opt.cls ? 'Class:' : 'Batch:'}</b> ${esc(opt.cls || opt.batch)}</div>
+      <div><b>Total Students:</b> ${students.length}</div>
+    </div>
+    <table><thead>${head}</thead><tbody>${rows || `<tr><td colspan="3" style="text-align:center">No data</td></tr>`}</tbody></table>`;
+  }
+
+  document.getElementById('slipArea').innerHTML = `<div class="slip">
+    <div class="slip-top-space"></div>
+    ${header}
+    <div class="slip-title">${esc(title).toUpperCase()}</div>
+    ${body}
+    <div class="slip-foot"><div class="sign">Authorised Signature</div></div>
+  </div>`;
+  window.print();
+}
+
+/* ===== SUBJECT-WISE MARKSHEETS ===== */
+function msSubjectSingle() {
+  const sopts = getStudents().map(s => `<option value="${s.id}">${esc(s.name)} (Class ${esc(s.class)} • ${esc(s.batch || '-')})</option>`).join("");
+  openModal(`<h2>👤 Subject Marksheet — Single Student</h2>
+    <div class="fg"><label>Select Student</label><select id="sub_stud"><option value="">Select</option>${sopts}</select></div>
+    <div class="fg"><label>How many subjects?</label><input type="number" id="sub_n" min="1" value="5"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="width:auto" onclick="subjectStep2('single')">Next: Subject Names</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+function msSubjectClass() {
+  openModal(`<h2>🏫 Subject Marksheet — Single Class</h2>
+    <div class="fg"><label>Select Class</label>${classOptions('sub_cls')}</div>
+    <div class="fg"><label>How many subjects?</label><input type="number" id="sub_n" min="1" value="5"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="width:auto" onclick="subjectStep2('class')">Next: Subject Names</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+function msSubjectBatch() {
+  openModal(`<h2>🏷️ Subject Marksheet — Batch</h2>
+    <div class="fg"><label>Select Batch</label>${batchOptions('sub_bat')}</div>
+    <div class="fg"><label>How many subjects?</label><input type="number" id="sub_n" min="1" value="5"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="width:auto" onclick="subjectStep2('batch')">Next: Subject Names</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+let subjState = {};
+function subjectStep2(mode) {
+  const n = parseInt(document.getElementById('sub_n').value);
+  if (isNaN(n) || n < 1) return alert("Enter valid number of subjects");
+  let students = [];
+  let label = "";
+  if (mode === 'single') {
+    const sid = document.getElementById('sub_stud').value;
+    if (!sid) return alert("Select a student");
+    students = getStudents().filter(s => s.id === sid);
+    label = esc(students[0].name);
+  } else if (mode === 'class') {
+    const cls = document.getElementById('sub_cls').value;
+    if (!cls) return alert("Select a class");
+    students = getStudents().filter(s => s.class === cls);
+    label = "Class " + cls;
+  } else {
+    const batch = document.getElementById('sub_bat').value;
+    if (!batch) return alert("Select a batch");
+    students = getStudents().filter(s => s.batch === batch);
+    label = batch;
+  }
+  if (!students.length) return alert("No students found");
+  subjState = { mode, students, n, label };
+  let inputs = "";
+  for (let i = 1; i <= n; i++) {
+    inputs += `<div class="fg"><label>Subject ${i} Name</label><input id="subname_${i}" placeholder="e.g., Mathematics" required></div>`;
+  }
+  openModal(`<h2>📚 Subject Names (${label})</h2>
+    <div class="fgrid">${inputs}</div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="width:auto" onclick="subjectStep3()">Next: Enter Marks</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function subjectStep3() {
+  const subjects = [];
+  for (let i = 1; i <= subjState.n; i++) {
+    const v = document.getElementById('subname_' + i).value.trim();
+    subjects.push(v || ('Subject ' + i));
+  }
+  subjState.subjects = subjects;
+  const students = subjState.students;
+  let tableHTML = `<table><thead><tr><th>ID</th><th>Name</th>${subjects.map(s => `<th>${esc(s)}</th>`).join("")}</tr></thead><tbody>`;
+  students.forEach(s => {
+    tableHTML += `<tr><td><span class="badge b-blue">${esc(s.id)}</span></td><td>${esc(s.name)}</td>`;
+    subjects.forEach((subj, i) => {
+      tableHTML += `<td><input type="number" min="0" id="smk_${s.id}_${i}" style="width:75px;padding:6px;border:1px solid var(--border);border-radius:4px" placeholder="0"></td>`;
+    });
+    tableHTML += `</tr>`;
+  });
+  tableHTML += `</tbody></table>`;
+  openModal(`<h2>✍️ Enter Marks (${esc(subjState.label)})</h2>
+    <div class="tw">${tableHTML}</div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary" style="width:auto" onclick="printSubjectMarksheet()">🖨️ Generate Marksheet</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function printSubjectMarksheet() {
+  const { students, subjects, label } = subjState;
+  const data = students.map(s => ({
+    s,
+    marks: subjects.map((subj, i) => parseInt(document.getElementById('smk_' + s.id + '_' + i).value) || 0)
+  }));
+  closeModal();
+  const st = getSettings();
+  const logo = st.logo ? `<img src="${st.logo}">` : `<div class="sl">VA</div>`;
+  const contactLine = [st.phone ? '📞 ' + esc(st.phone) : '', st.email ? '✉️ ' + esc(st.email) : ''].filter(Boolean).join('  •  ');
+  const header = `<div class="slip-h">${logo}<div>
+    <h1>${esc(st.name)}</h1>
+    <div class="caddr">${esc(st.address)}</div>
+    ${contactLine ? `<div class="ccontact">${contactLine}</div>` : ''}
+  </div></div>`;
+
+  let body = "";
+  if (students.length === 1) {
+    const d = data[0];
+    const s = d.s;
+    let rows = subjects.map((subj, i) => `<tr><td>${esc(subj)}</td><td>${d.marks[i]}</td></tr>`).join("");
+    const total = d.marks.reduce((a, b) => a + b, 0);
+    body = `<div class="slip-row">
+      <div><b>Student Name:</b> ${esc(s.name)}</div><div><b>Student ID:</b> ${esc(s.id)}</div>
+      <div><b>Class:</b> ${esc(s.class)}</div><div><b>Batch:</b> ${esc(s.batch || '-')}</div>
+    </div>
+    <table><thead><tr><th>Subject</th><th>Marks Obtained</th></tr></thead><tbody>${rows}<tr><td><b>Total</b></td><td><b>${total}</b></td></tr></tbody></table>`;
+  } else {
+    let head = `<tr><th>ID</th><th>Name</th>${subjects.map(s => `<th>${esc(s)}</th>`).join("")}<th>Total</th></tr>`;
+    let rows = data.map(d => {
+      const total = d.marks.reduce((a, b) => a + b, 0);
+      return `<tr><td><b>${esc(d.s.id)}</b></td><td>${esc(d.s.name)}</td>${d.marks.map(m => `<td>${m}</td>`).join("")}<td><b>${total}</b></td></tr>`;
+    }).join("");
+    body = `<div class="slip-row">
+      <div><b>Group:</b> ${esc(label)}</div><div><b>Total Students:</b> ${students.length}</div>
+    </div>
+    <table><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  }
+
+  document.getElementById('slipArea').innerHTML = `<div class="slip">
+    <div class="slip-top-space"></div>
+    ${header}
+    <div class="slip-title">SUBJECT MARKSHEET — ${esc(label).toUpperCase()}</div>
+    ${body}
+    <div class="slip-foot"><div class="sign">Authorised Signature</div></div>
+  </div>`;
+  window.print();
+}
+
+/* ===================== FEES ===================== */
+function renderFees() {
+  setTitle("Fees");
+  const collected = getFees().filter(f => f.status === 'Paid').reduce((a, f) => a + (parseFloat(f.amount) || 0), 0);
+  const pending = getFees().filter(f => f.status !== 'Paid').reduce((a, f) => a + (parseFloat(f.amount) || 0), 0);
+  const opts = CLASSES.map(c => `<option value="${c}">Class ${c}</option>`).join("");
+  const bopts = getBatches().map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join("");
+  C().innerHTML = `
+  <div class="cards">
+    <div class="stat"><div class="ic">💰</div><div><h3>₹${collected.toFixed(0)}</h3><p>Total Collected</p></div></div>
+    <div class="stat"><div class="ic">⏳</div><div><h3>₹${pending.toFixed(0)}</h3><p>Pending Amount</p></div></div>
+    <div class="stat"><div class="ic">🧾</div><div><h3>${getFees().length}</h3><p>Total Records</p></div></div>
+  </div>
+  <div class="panel">
+    <div class="phead"><h2>💰 Fee Management</h2><button class="btn btn-primary btn-sm" onclick="addFee()">➕ Add Fee Record</button></div>
+    <div class="toolbar">
+      <input class="srch" id="feeSearch" placeholder="🔍 Search by student name or receipt no..." oninput="drawFees()">
+      <select id="feeClassFilter" onchange="drawFees()"><option value="">All Classes</option>${opts}</select>
+      <select id="feeBatchFilter" onchange="drawFees()"><option value="">All Batches</option>${bopts}</select>
+      <select id="feeStatusFilter" onchange="drawFees()"><option value="">All Status</option><option value="Paid">Paid</option><option value="Not Paid">Not Paid</option></select>
+    </div>
+    <div class="tw"><table><thead><tr><th>Receipt No</th><th>Student</th><th>Class</th><th>Batch</th><th>Month/Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="feeBody"></tbody></table></div>
+  </div>`;
+  drawFees();
+}
+
+function drawFees() {
+  const q = (document.getElementById('feeSearch').value || "").toLowerCase();
+  const fc = document.getElementById('feeClassFilter').value;
+  const fb = document.getElementById('feeBatchFilter').value;
+  const fs = document.getElementById('feeStatusFilter').value;
+  let list = getFees().slice().reverse();
+  if (fc) list = list.filter(f => f.class === fc);
+  if (fb) list = list.filter(f => f.batch === fb);
+  if (fs) list = list.filter(f => f.status === fs);
+  if (q) list = list.filter(f => ((f.studentName || "") + (f.receipt || "")).toLowerCase().includes(q));
+  const tb = document.getElementById('feeBody');
+  if (!list.length) { tb.innerHTML = `<tr><td colspan="8" class="empty">No fee records found</td></tr>`; return; }
+  tb.innerHTML = list.map(f => `<tr>
+    <td><span class="badge b-blue">${esc(f.receipt || '-')}</span></td>
+    <td>${esc(f.studentName)}</td>
+    <td>Class ${esc(f.class)}</td>
+    <td><span class="badge b-purple">${esc(f.batch || '-')}</span></td>
+    <td>${esc(f.month || fmtDate(f.date))}</td>
+    <td>₹${esc(f.amount)}</td>
+    <td><span class="badge ${f.status === 'Paid' ? 'b-green' : 'b-red'}">${esc(f.status)}</span></td>
+    <td class="acts">
+      <button class="btn btn-sm btn-primary" onclick="printFeeSlip('${f.id}')">🖨️ Slip</button>
+      <button class="btn btn-sm btn-warn" onclick="addFee('${f.id}')">Edit</button>
+      <button class="btn btn-sm btn-danger" onclick="delFee('${f.id}')">Delete</button>
+    </td></tr>`).join("");
+}
+
+function addFee(id) {
+  const f = id ? getFees().find(x => x.id === id) : {};
+  const sopts = getStudents().map(s => `<option value="${s.id}" ${f.studentId === s.id ? 'selected' : ''}>${esc(s.name)} (Class ${esc(s.class)} • ${esc(s.batch || '-')})</option>`).join("");
+  openModal(`<h2>${id ? 'Edit' : 'Add'} Fee Record</h2>
+  <form id="feeForm"><div class="fgrid">
+      <div class="fg full"><label>Select Student *</label><select id="fe_stud" required onchange="autoFillFeeStudent()"><option value="">Select</option>${sopts}</select></div>
+      <div class="fg"><label>Class</label><input id="fe_class" value="${esc(f.class || '')}" readonly></div>
+      <div class="fg"><label>Batch</label><input id="fe_batch" value="${esc(f.batch || '')}" readonly></div>
+      <div class="fg"><label>Amount (₹) *</label><input type="number" id="fe_amount" min="0" value="${esc(f.amount || '')}" required></div>
+      <div class="fg"><label>Status *</label><select id="fe_status" required>
+        <option value="Paid" ${f.status === 'Paid' ? 'selected' : ''}>Paid</option>
+        <option value="Not Paid" ${f.status === 'Not Paid' ? 'selected' : ''}>Not Paid</option>
+      </select></div>
+      <div class="fg"><label>Month</label><input id="fe_month" placeholder="e.g., January 2025" value="${esc(f.month || '')}"></div>
+      <div class="fg"><label>Date</label><input type="date" id="fe_date" value="${f.date || ''}"></div>
+      <div class="fg"><label>Receipt / Slip No</label><input id="fe_receipt" value="${esc(f.receipt || '')}"></div>
+      <div class="fg full"><label>Note</label><textarea id="fe_note">${esc(f.note || '')}</textarea></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button type="submit" class="btn btn-primary" style="width:auto">Save</button>
+      <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div></form>`);
+  if (id) autoFillFeeStudent();
+  document.getElementById('feeForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const sid = document.getElementById('fe_stud').value;
+    const stud = getStudents().find(x => x.id === sid);
+    if (!stud) return alert("Select a valid student");
+    let fees = getFees().slice();
+    const data = {
+      studentId: sid,
+      studentName: stud.name,
+      class: stud.class,
+      batch: stud.batch || "",
+      amount: document.getElementById('fe_amount').value,
+      status: document.getElementById('fe_status').value,
+      month: document.getElementById('fe_month').value.trim(),
+      date: document.getElementById('fe_date').value,
+      receipt: document.getElementById('fe_receipt').value.trim(),
+      note: document.getElementById('fe_note').value.trim()
+    };
+    if (id) {
+      fees = fees.map(x => x.id === id ? { ...x, ...data } : x);
+    } else {
+      data.id = "FEE" + Date.now();
+      if (!data.receipt) data.receipt = "R" + Date.now().toString().slice(-6);
+      fees.push(data);
+    }
+    setFees(fees);
+    closeModal();
+    renderFees();
+  });
+}
+
+function autoFillFeeStudent() {
+  const sid = document.getElementById('fe_stud').value;
+  const stud = getStudents().find(x => x.id === sid);
+  if (stud) {
+    document.getElementById('fe_class').value = stud.class;
+    document.getElementById('fe_batch').value = stud.batch || "";
+  }
+}
+
+function delFee(id) {
+  if (!confirm("Delete this fee record?")) return;
+  setFees(getFees().filter(f => f.id !== id));
+  renderFees();
+}
+
+function printFeeSlip(id) {
+  const f = getFees().find(x => x.id === id);
+  if (!f) return;
+  const st = getSettings();
+  const logo = st.logo ? `<img src="${st.logo}">` : `<div class="sl">VA</div>`;
+  const contactLine = [st.phone ? '📞 ' + esc(st.phone) : '', st.email ? '✉️ ' + esc(st.email) : ''].filter(Boolean).join('  •  ');
+
+  document.getElementById('slipArea').innerHTML = `<div class="slip">
+    <div class="slip-top-space"></div>
+    <div class="slip-h">${logo}<div>
+      <h1>${esc(st.name)}</h1>
+      <div class="caddr">${esc(st.address)}</div>
+      ${contactLine ? `<div class="ccontact">${contactLine}</div>` : ''}
+    </div></div>
+    <div class="slip-title">FEE RECEIPT</div>
+    <div class="slip-row">
+      <div><b>Receipt No:</b> ${esc(f.receipt || '-')}</div><div><b>Date:</b> ${esc(f.month || fmtDate(f.date) || new Date().toLocaleDateString('en-GB'))}</div>
+      <div><b>Student Name:</b> ${esc(f.studentName)}</div><div><b>Student ID:</b> ${esc(f.studentId)}</div>
+      <div><b>Class:</b> ${esc(f.class)}</div><div><b>Batch:</b> ${esc(f.batch || '-')}</div>
+    </div>
+    <table><thead><tr><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody><tr><td>Tuition / Coaching Fee${f.note ? ' (' + esc(f.note) + ')' : ''}</td><td>₹${esc(f.amount)}</td><td>${esc(f.status)}</td></tr>
+      <tr><td><b>Total</b></td><td><b>₹${esc(f.amount)}</b></td><td><b>${esc(f.status)}</b></td></tr></tbody></table>
+    <div class="slip-foot"><div class="sign">Authorised Signature</div></div>
+  </div>`;
+  window.print();
+}
+
+/* ===================== TOPPER BOARD ===================== */
+function renderTopper() {
+  setTitle("Topper Board");
+  const full = fullTopper();
+  const batches = getBatches();
+  let batchBlocks = batches.map(b => {
+    const studs = getStudents().filter(s => s.batch === b);
+    if (!studs.length) return `<div class="panel"><div class="phead"><h2>🏷️ ${esc(b)} — Overall</h2></div><div class="empty">No students</div></div>`;
+    const ranked = studs.map(s => ({ s, avg: studentAvg(s.id) })).filter(x => x.avg != null).sort((a, b) => b.avg - a.avg);
+    if (!ranked.length) return `<div class="panel"><div class="phead"><h2>🏷️ ${esc(b)} — Overall</h2></div><div class="empty">No marks recorded</div></div>`;
+    const rows = ranked.map((x, i) => `<tr><td>${i + 1}${i === 0 ? ' 🏆' : ''}</td><td>${esc(x.s.name)}</td><td>${esc(x.s.id)}</td><td>Class ${esc(x.s.class)}</td><td><span class="badge ${i === 0 ? 'b-gold' : 'b-purple'}">${x.avg.toFixed(2)}%</span></td></tr>`).join("");
+    return `<div class="panel" style="border-left:4px solid #6d28d9"><div class="phead"><h2>🏷️ ${esc(b)} — Overall Topper</h2></div>
+      <div class="tw"><table><thead><tr><th>Rank</th><th>Student</th><th>ID</th><th>Class</th><th>Average %</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  }).join("");
+
+  let classBlocks = CLASSES.map(c => {
+    const studs = getStudents().filter(s => s.class === c);
+    if (!studs.length) return "";
+    const ranked = studs.map(s => ({ s, avg: studentAvg(s.id) })).filter(x => x.avg != null).sort((a, b) => b.avg - a.avg);
+    if (!ranked.length) return "";
+    const rows = ranked.map((x, i) => `<tr><td>${i + 1}${i === 0 ? ' 🏆' : ''}</td><td>${esc(x.s.name)}</td><td>${esc(x.s.id)}</td><td><span class="badge b-purple">${esc(x.s.batch || '-')}</span></td><td><span class="badge ${i === 0 ? 'b-gold' : 'b-blue'}">${x.avg.toFixed(2)}%</span></td></tr>`).join("");
+    return `<div class="panel"><div class="phead"><h2>📚 Class ${c} — Overall Topper</h2></div>
+      <div class="tw"><table><thead><tr><th>Rank</th><th>Student</th><th>ID</th><th>Batch</th><th>Average %</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  }).join("");
+
+  let weeklyRows = getTests().slice().sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => {
+    const top = classWeeklyTopper(t.class, t.id);
+    if (!top) return `<tr><td><b>${esc(t.name)}</b></td><td>Class ${esc(t.class)}</td><td colspan="4" style="color:#94a3b8">No marks</td></tr>`;
+    return `<tr><td><b>${esc(t.name)}</b></td><td>Class ${esc(t.class)}</td><td>${esc(top.student.name)} <span class="badge b-purple">${esc(top.student.batch || '-')}</span></td><td>${top.full}</td><td>${top.obtained}</td><td><span class="badge b-gold">${top.pct.toFixed(2)}%</span></td></tr>`;
+  }).join("") || `<tr><td colspan="6" class="empty">No tests yet</td></tr>`;
+
+  C().innerHTML = `
+  <div class="panel" style="border-top:3px solid var(--blue)"><div class="phead"><h2>🏆 Full Coaching Overall Topper</h2></div>
+    ${full ? `<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="width:60px;height:60px;border-radius:10px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold">${esc(full.student.name[0].toUpperCase())}</div>
+      <div><h2 style="color:var(--navy);font-size:18px">${esc(full.student.name)}</h2>
+      <p style="color:var(--muted)">Class ${esc(full.student.class)} • ${esc(full.student.batch || '-')} • ID ${esc(full.student.id)}</p>
+      <span class="badge b-gold">Average ${full.avg.toFixed(2)}%</span></div></div>`
+      : `<div class="empty">No marks recorded yet</div>`}
+  </div>
+  <h2 style="color:var(--navy);font-size:16px;margin:6px 0 12px">🏷️ Batch-wise Toppers</h2>
+  ${batchBlocks || '<div class="panel"><div class="empty">No batches yet</div></div>'}
+  <div class="panel"><div class="phead"><h2>📅 Class-wise Weekly Toppers</h2></div>
+    <div class="tw"><table><thead><tr><th>Test</th><th>Class</th><th>Topper</th><th>Full</th><th>Obtained</th><th>%</th></tr></thead><tbody>${weeklyRows}</tbody></table></div>
+  </div>
+  <h2 style="color:var(--navy);font-size:16px;margin:6px 0 12px">📚 Class-wise Toppers</h2>
+  ${classBlocks || '<div class="panel"><div class="empty">No students yet</div></div>'}`;
+}
+
+/* ===================== REPORTS ===================== */
+function renderReports() {
+  setTitle("Reports / Slips");
+  const students = getStudents();
+  let rows = students.length ? students.map(s => {
+    const sum = studentSummary(s.id);
+    return `<tr><td><span class="badge b-blue">${esc(s.id)}</span></td><td>${esc(s.name)}</td><td>Class ${esc(s.class)}</td><td><span class="badge b-purple">${esc(s.batch || '-')}</span></td>
+      <td>${sum ? sum.count : 0}</td><td>${sum ? sum.avg.toFixed(2) + '%' : '-'}</td>
+      <td><button class="btn btn-sm btn-primary" onclick="openSlipDialog('${s.id}')">🖨️ Slip</button></td></tr>`;
+  }).join("") : `<tr><td colspan="7" class="empty">No students yet</td></tr>`;
+  C().innerHTML = `<div class="panel"><div class="phead"><h2>🖨️ Performance Slips / Reports</h2></div>
+    <p style="color:var(--muted);margin-bottom:14px">Generate a printable slip for student performance. Choose which tests to include.</p>
+    <div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Batch</th><th>Tests</th><th>Average</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>
+  </div>`;
+}
+
+/* ===================== SLIP DIALOG ===================== */
+function openSlipDialog(id) {
+  const s = getStudents().find(x => x.id === id);
+  if (!s) return;
+  const recs = studentRecords(id);
+  if (!recs.length) {
+    if (confirm("This student has no test records. Generate empty slip anyway?")) generateSlip(id, null, null);
+    return;
+  }
+  const optsFrom = recs.map((r, i) => `<option value="${i}">${esc(r.name)} (${fmtDate(r.date)})</option>`).join("");
+  const optsTo = recs.map((r, i) => `<option value="${i}" ${i === recs.length - 1 ? 'selected' : ''}>${esc(r.name)} (${fmtDate(r.date)})</option>`).join("");
+  openModal(`<h2>🖨️ Generate Slip — ${esc(s.name)}</h2>
+    <p style="color:var(--muted);margin-bottom:14px">Choose the test range to include in the slip.</p>
+    <div class="fgrid">
+      <div class="fg"><label>From Test</label><select id="slipFrom">${optsFrom}</select></div>
+      <div class="fg"><label>To Test</label><select id="slipTo">${optsTo}</select></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary" style="width:auto" onclick="(function(){var f=+document.getElementById('slipFrom').value,t=+document.getElementById('slipTo').value;if(f>t){var x=f;f=t;t=x;}closeModal();generateSlip('${id}',f,t);})()">🖨️ Print Slip</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+/* ===================== PERFORMANCE SLIP ===================== */
+function generateSlip(id, fromIdx, toIdx) {
+  const s = getStudents().find(x => x.id === id);
+  if (!s) return;
+  const st = getSettings();
+  const allRecs = studentRecords(id);
+  let recs = allRecs;
+  if (fromIdx != null && toIdx != null) recs = allRecs.slice(fromIdx, toIdx + 1);
+  const sum = recs.length ? studentSummary(id, recs) : null;
+  const logo = st.logo ? `<img src="${st.logo}">` : `<div class="sl">VA</div>`;
+  const contactLine = [st.phone ? '📞 ' + esc(st.phone) : '', st.email ? '✉️ ' + esc(st.email) : ''].filter(Boolean).join('  •  ');
+
+  let rows = recs.length ? recs.map(r => `<tr><td>${esc(r.name)}</td><td>${fmtDate(r.date)}</td><td>${r.full}</td><td>${r.obtained}</td><td>${r.pct.toFixed(2)}%</td></tr>`).join("")
+    : `<tr><td colspan="5" style="text-align:center">No test records</td></tr>`;
+
+  const rangeLabel = recs.length ? `${esc(recs[0].name)} → ${esc(recs[recs.length - 1].name)}` : '—';
+
+  let summary = sum ? `<div class="slip-row">
+    <div><b>Tests Included:</b> ${sum.count}</div><div><b>Average %:</b> ${sum.avg.toFixed(2)}%</div>
+    <div><b>Highest Score:</b> ${sum.hi.toFixed(2)}%</div><div><b>Best Test:</b> ${esc(sum.best.name)}</div>
+  </div>` : `<p>No performance data available for the selected range.</p>`;
+
+  document.getElementById('slipArea').innerHTML = `<div class="slip">
+    <div class="slip-top-space"></div>
+    <div class="slip-h">${logo}<div>
+      <h1>${esc(st.name)}</h1>
+      <div class="caddr">${esc(st.address)}</div>
+      ${contactLine ? `<div class="ccontact">${contactLine}</div>` : ''}
+    </div></div>
+    <div class="slip-title">STUDENT PERFORMANCE SLIP</div>
+    <div class="slip-row">
+      <div><b>Student Name:</b> ${esc(s.name)}</div><div><b>Student ID:</b> ${esc(s.id)}</div>
+      <div><b>Class:</b> ${esc(s.class)}</div><div><b>Batch:</b> ${esc(s.batch || '-')}</div>
+      <div><b>Test Range:</b> ${rangeLabel}</div><div><b>Generated On:</b> ${new Date().toLocaleDateString('en-GB')}</div>
+    </div>
+    <table><thead><tr><th>Test Name</th><th>Date</th><th>Full</th><th>Obtained</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>
+    <h3 style="margin:14px 0 6px;color:#0f2d52;font-size:14px">Summary</h3>
+    ${summary}
+    <div class="slip-foot"><div class="sign">Authorised Signature</div></div>
+  </div>`;
+  window.print();
+}
+
+/* ===================== SETTINGS ===================== */
+function renderSettings() {
+  setTitle("Settings");
+  const st = getSettings();
+  C().innerHTML = `
+  <div class="panel"><div class="phead"><h2>⚙️ Coaching Settings (shown on slips)</h2></div>
+    <form id="setForm"><div class="fgrid">
+      <div class="fg full"><label>Coaching Name</label><input id="set_name" value="${esc(st.name)}"></div>
+      <div class="fg full"><label>Coaching Address</label><input id="set_addr" value="${esc(st.address)}"></div>
+      <div class="fg"><label>Phone Number</label><input id="set_phone" value="${esc(st.phone || '')}"></div>
+      <div class="fg"><label>Email</label><input id="set_email" value="${esc(st.email || '')}"></div>
+      <div class="fg full"><label>Coaching Logo (used on slips)</label><input type="file" id="set_logo" accept="image/*"></div>
+    </div>
+    ${st.logo ? `<div style="margin:10px 0"><img src="${st.logo}" style="height:70px;border:1px solid var(--border);border-radius:8px;padding:4px"></div>` : ''}
+    <button type="submit" class="btn btn-primary btn-sm">Save Settings</button></form>
+  </div>
+  <div class="panel"><div class="phead"><h2>🏷️ Batches</h2><button class="btn btn-primary btn-sm" onclick="go('batches')">Open Batch Manager</button></div>
+    <p style="color:var(--muted)">${getBatches().length} batch(es): ${getBatches().map(b => esc(b)).join(", ") || 'none'}</p>
+  </div>`;
+
+  document.getElementById('setForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const st = getSettings();
+    st.name = set_name.value.trim() || "Vision Academy";
+    st.address = set_addr.value.trim();
+    st.phone = set_phone.value.trim();
+    st.email = set_email.value.trim();
+    const lf = document.getElementById('set_logo').files[0];
+    if (lf) st.logo = await fileToB64(lf);
+    setSettings(st);
+    refreshChrome();
+    alert("Settings saved.");
+    renderSettings();
+  });
+}
+
+/* ===================== ADMIN PROFILE ===================== */
+function renderProfile() {
+  setTitle("Admin Profile");
+  const a = currentAdmin();
+  const av = a.photo ? `<img src="${a.photo}" style="width:60px;height:60px;border-radius:10px;object-fit:cover">` : `<div style="width:60px;height:60px;border-radius:10px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold">${esc((a.name || 'A')[0].toUpperCase())}</div>`;
+  C().innerHTML = `
+  <div class="panel"><div class="phead"><h2>👤 Admin Profile</h2></div>
+    <div style="display:flex;gap:16px;align-items:flex-start">
+      ${av}
+      <div>
+        <h2 style="color:var(--navy);font-size:18px">${esc(a.name)}</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:11px;margin-top:12px">
+          <div><b style="color:var(--muted);font-size:11.5px">Email</b><div>${esc(a.email)}</div></div>
+          <div><b style="color:var(--muted);font-size:11.5px">Role</b><div>Administrator</div></div>
+          <div><b style="color:var(--muted);font-size:11.5px">Cloud Sync</b><div>Enabled ✅</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel"><div class="phead"><h2>✏️ Edit Admin Name</h2></div>
+    <form id="nameForm" style="max-width:380px"><div class="fg"><label>Admin Name</label><input id="adminName" value="${esc(a.name)}" required></div>
+    <button type="submit" class="btn btn-primary btn-sm">Save Name</button></form>
+  </div>
+  <div class="panel"><div class="phead"><h2>Account</h2></div>
+    <button class="btn btn-danger btn-sm" onclick="logout()">🚪 Logout</button>
+  </div>`;
+
+  document.getElementById('nameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    ADMIN.name = document.getElementById('adminName').value.trim() || "Admin";
+    persist();
+    refreshChrome();
+    alert("Name updated.");
+    renderProfile();
+  });
+}
+</script>
+</body>
+</html>
